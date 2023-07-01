@@ -39,9 +39,7 @@ def str_field_to_numpy(field: list[str]) -> np.ndarray:
 
 
 def test_scores():
-    cells = str_field_to_numpy(_field_to_score)
-    field = Field(cells.shape[0], cells.shape[1], np.max(cells) + 1, random_initializing=False)
-    field.cells = cells
+    field = Field.from_cells(str_field_to_numpy(_field_to_score))
     assert field.calc_score((0, 0)) == 33
     assert field.calc_score((field.width - 1, 0)) == 24
     assert field.calc_score((0, field.height - 1)) == 2
@@ -49,8 +47,28 @@ def test_scores():
 
 
 def test_scores_out_of_field():
-    field = Field(10, 7, 7, random_initializing=False)
+    field = Field(10, 7, 7)
     with pytest.raises(AssertionError):
         field.calc_score((-1, 0))
     with pytest.raises(AssertionError):
         field.calc_score((0, 100))
+
+
+def test_forbidden_colors():
+    field = Field.from_cells(str_field_to_numpy(_field_to_score))
+    assert field.forbidden_colors([(0, 0)]) == {0}
+    assert field.forbidden_colors([(0, 0), (field.width - 1, 0)]) == {0, 1}
+    assert field.forbidden_colors([(0, 0), (field.width - 1, 0), (0, field.height - 1)]
+                                  ) == {0, 1, 2}
+    assert field.forbidden_colors([(0, 0), (field.width - 1, 0), (0, field.height - 1),
+                                   (field.width - 1, field.height - 1)]) == {0, 1, 2, 4}
+
+
+def test_make_move():
+    field = Field.from_cells(str_field_to_numpy(_field_to_score))
+    player_a_home = (0, 0)
+    player_b_home = (field.width - 1, field.height - 1)
+    homes = [player_a_home, player_b_home]
+    assert field.calc_score(player_b_home) == 1
+    field.make_move(player_b_home, homes, 1)
+    assert field.calc_score(player_b_home) > 10
