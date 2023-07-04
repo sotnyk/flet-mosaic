@@ -1,13 +1,13 @@
 import numpy as np
 
 
-def calc_score_matrics(cells: np.ndarray, players_home: tuple[int, int]) -> int:
-    x, y = players_home
+def cells_with_same_color(cells: np.ndarray, home: tuple[int, int]) -> set[tuple[int, int]]:
+    x, y = home
     width, height = cells.shape
     assert 0 <= x < width and 0 <= y < height, "Wrong player home position"
     cells_to_process = {(x, y)}
     processed_cells = set()
-    scored_cells = set()
+    res = set()
     home_color = cells[x, y]
     while cells_to_process:
         x, y = cells_to_process.pop()
@@ -15,7 +15,7 @@ def calc_score_matrics(cells: np.ndarray, players_home: tuple[int, int]) -> int:
             continue
         processed_cells.add((x, y))
         if cells[x, y] == home_color:
-            scored_cells.add((x, y))
+            res.add((x, y))
             if x > 0:
                 cells_to_process.add((x - 1, y))
             if x < width - 1:
@@ -24,6 +24,11 @@ def calc_score_matrics(cells: np.ndarray, players_home: tuple[int, int]) -> int:
                 cells_to_process.add((x, y - 1))
             if y < height - 1:
                 cells_to_process.add((x, y + 1))
+    return res
+
+
+def calc_score(cells: np.ndarray, players_home: tuple[int, int]) -> int:
+    scored_cells = cells_with_same_color(cells, players_home)
     return len(scored_cells)
 
 
@@ -35,28 +40,7 @@ def make_move(cells: np.ndarray, player_home: tuple[int, int],
               players_homes: list[tuple[int, int]], new_color: int):
     assert new_color not in forbidden_colors(cells, players_homes + [player_home]), \
         "Forbidden color for parameter `new_color`"
-    x, y = player_home
-    width, height = cells.shape
-    old_color = cells[x, y]
-    assert 0 <= x < width and 0 <= y < height, "Wrong player home position"
-    cells_to_process = {(x, y)}
-    processed_cells = set()
-    cells_to_repaint = set()
-    while cells_to_process:
-        x, y = cells_to_process.pop()
-        if (x, y) in processed_cells:
-            continue
-        processed_cells.add((x, y))
-        if cells[x, y] == old_color:
-            cells_to_repaint.add((x, y))
-            if x > 0:
-                cells_to_process.add((x - 1, y))
-            if x < width - 1:
-                cells_to_process.add((x + 1, y))
-            if y > 0:
-                cells_to_process.add((x, y - 1))
-            if y < height - 1:
-                cells_to_process.add((x, y + 1))
+    cells_to_repaint = cells_with_same_color(cells, player_home)
     for x, y in cells_to_repaint:
         cells[x, y] = new_color
 
@@ -112,7 +96,7 @@ class Field:
         return forbidden_colors(self.cells, players_homes)
 
     def calc_score(self, player_home: tuple[int, int]) -> int:
-        return calc_score_matrics(self.cells, player_home)
+        return calc_score(self.cells, player_home)
 
     def make_move(self, player_home: tuple[int, int],
                   players_homes: list[tuple[int, int]], new_color: int):
