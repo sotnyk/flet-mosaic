@@ -76,13 +76,20 @@ class Field:
         res.cells = cells
         return res
 
+    def homes_two_players(self) -> list[tuple[int, int]]:
+        return [(0, 0), (self.width - 1, self.height - 1)]
+
+    def homes_four_players(self) -> list[tuple[int, int]]:
+        return [(0, 0), (self.width - 1, 0),
+                (self.width - 1, self.height - 1), (0, self.height - 1)]
+
     def random_init(self):
         self.cells = np.random.randint(0, self.color_num, (self.width, self.height))
         # Correct corners colors - they should be different
         not_used_colors = set(range(self.color_num))
         used_colors = {self.cells[0, 0]}
         not_used_colors.remove(self.cells[0, 0])
-        positions = [(0, self.height - 1), (self.width - 1, 0), (self.width - 1, self.height - 1)]
+        positions = self.homes_four_players()
         for x, y in positions:
             color = self.cells[x, y]
             if self.cells[x, y] in used_colors:
