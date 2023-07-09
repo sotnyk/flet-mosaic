@@ -8,9 +8,10 @@ def main(page: ft.Page):
     page.description = "Mosaic game implemented on Python+flet"
     page.author = "S.Sotnyk"
     page.add(game := MosaicControl())
-    page.window_height = 1200
-    page.window_width = 800
+    page.window_height = 800
+    page.window_width = 900
     game.init_game()
+    page.update()
 
 
 ft.app(main, "Mosaic game")

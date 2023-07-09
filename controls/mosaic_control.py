@@ -24,9 +24,11 @@ class MosaicControl(ft.UserControl):
                             ft.ElevatedButton("New game", expand=True),
                             ft.Text("   ", expand=True)],
                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
-        middle_row = ft.Row([MoveSelectorControl(),
+        middle_row = ft.Row([ft.Container(MoveSelectorControl(),
+                                          alignment=ft.alignment.top_right),
                              ft.canvas.Canvas(ref=self.canvas, width=640, height=640),
-                             MoveSelectorControl()],
+                             MoveSelectorControl(alignment=ft.MainAxisAlignment.END)
+                             ],
                             alignment=ft.MainAxisAlignment.CENTER)
         bottom_row = ft.Row([ft.Text("   ", expand=True),
                              FieldSizeControl(ref=self.field_size, expand=True),
