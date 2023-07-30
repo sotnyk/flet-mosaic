@@ -1,3 +1,5 @@
+from typing import cast
+
 import flet as ft
 from aenum import StrEnum
 
@@ -22,3 +24,6 @@ class WhoPlayControl(ft.UserControl):
                               content=ft.Row([human_btn, level1_btn, level2_btn]),
                               value=WhoPlay.HUMAN)
         return group
+
+    def selected_value(self)->WhoPlay:
+        return cast(WhoPlay, self.group.current.value)
