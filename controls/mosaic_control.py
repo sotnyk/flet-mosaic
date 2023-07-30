@@ -1,3 +1,6 @@
+import threading
+import time
+
 import flet as ft
 from flet import canvas as cv
 from flet_core import Paint
@@ -12,6 +15,9 @@ from mosaic_core.field import Field
 class MosaicControl(ft.UserControl):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.running = False
+        self.cur_player_index = 0
+        self.th: threading.Thread|None = None
         self.who_play_a = ft.Ref[WhoPlayControl]()
         self.who_play_b = ft.Ref[WhoPlayControl]()
         self.field_size = ft.Ref[FieldSizeControl]()
@@ -19,17 +25,29 @@ class MosaicControl(ft.UserControl):
         self.field: Field | None = None
         self.player_to_move = 0
 
+    def did_mount(self):
+        self.running = True
+        self.th = threading.Thread(target=self.update_timer, args=(), daemon=True)
+
+    def will_unmount(self):
+        self.running = False
+
+    def update_timer(self):
+        while self.running:
+            self.update()
+            time.sleep(1)
+
     def build(self):
+        field_size = 640
         title_row = ft.Row([WhoPlayControl(ref=self.who_play_a, expand=True),
                             ft.ElevatedButton("New game", expand=True),
                             ft.Text("   ", expand=True)],
                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
-        middle_row = ft.Row([ft.Container(MoveSelectorControl(),
-                                          alignment=ft.alignment.top_right),
-                             ft.canvas.Canvas(ref=self.canvas, width=640, height=640),
-                             MoveSelectorControl(alignment=ft.MainAxisAlignment.END)
-                             ],
-                            alignment=ft.MainAxisAlignment.CENTER)
+        middle_row = ft.Row([
+            ft.Container(MoveSelectorControl(height=field_size, alignment=ft.MainAxisAlignment.START)),
+            ft.canvas.Canvas(ref=self.canvas, width=field_size, height=field_size),
+            ft.Container(MoveSelectorControl(height=field_size, alignment=ft.MainAxisAlignment.END))
+                             ])
         bottom_row = ft.Row([ft.Text("   ", expand=True),
                              FieldSizeControl(ref=self.field_size, expand=True),
                              WhoPlayControl(ref=self.who_play_b, expand=True)],

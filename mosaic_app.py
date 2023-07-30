@@ -9,7 +9,7 @@ def main(page: ft.Page):
     page.author = "S.Sotnyk"
     page.add(game := MosaicControl())
     page.window_height = 800
-    page.window_width = 900
+    page.window_width = 800
     game.init_game()
     page.update()
 
