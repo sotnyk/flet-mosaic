@@ -1,5 +1,5 @@
 import flet as ft
-from aenum import StrEnum, IntEnum
+from aenum import IntEnum
 
 
 class FieldSize(IntEnum):
@@ -23,7 +23,7 @@ class FieldSizeControl(ft.UserControl):
 
     def build(self):
         for n, s in enumerate(FieldSize):
-            btn = ft.Radio(ref=self.btns[n], label=f"{s.value}x{s.value}", value=s)
+            btn = ft.Radio(ref=self.btns[n], label=f"{s.value}x{s.value}", value=str(s))
         group = ft.RadioGroup(ref=self.group,
                               content=ft.Row([b.current for b in self.btns]),
                               value=self.btns[0].current.value)
