@@ -14,10 +14,11 @@ def main(page: ft.Page):
             height=810,
         )
     )
+    # page.add(ft.Text(f"Initial route: {page.route}"))
     page.window_height = 810
     page.window_width = 800
     game.init_game()
     page.update()
 
 
-ft.app(main, "Mosaic game", view=ft.WEB_BROWSER)
+ft.app(main, view=ft.WEB_BROWSER, port=8080, assets_dir="assets")
