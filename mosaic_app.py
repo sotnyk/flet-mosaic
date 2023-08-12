@@ -1,6 +1,7 @@
 import flet as ft
 
 from controls.mosaic_control import MosaicControl
+from mosaic_core import get_version
 
 
 class MosaicApp(ft.UserControl):
@@ -19,6 +20,26 @@ class MosaicApp(ft.UserControl):
                 ),
             ]
         )
+        self.appbar_items = [
+            ft.PopupMenuItem(text="About Mosaic", on_click=lambda _: page.go("/about")),
+        ]
+        self.appbar = ft.AppBar(
+            leading=ft.Icon(ft.icons.APPS_SHARP),
+            leading_width=50,
+            title=ft.Text(f"Mosaic game v."+get_version(), font_family="Pacifico", size=18,
+                          text_align=ft.TextAlign.START),
+            center_title=False,
+            toolbar_height=40,
+            bgcolor=ft.colors.LIGHT_BLUE_ACCENT_700,
+            actions=[
+                ft.Container(
+                    content=ft.PopupMenuButton(items=self.appbar_items),
+                    margin=ft.margin.only(left=50, right=25),
+                )
+            ],
+        )
+        self.page.appbar = self.appbar
+        self.page.update()
 
 
     def view_pop(self, view):
