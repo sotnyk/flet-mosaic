@@ -1,6 +1,7 @@
 import flet as ft
 
 from controls.mosaic_control import MosaicControl
+from controls.rules import rules
 from mosaic_core import get_version
 
 
@@ -11,9 +12,10 @@ class MosaicApp(ft.UserControl):
         self.game = MosaicControl()
         page.on_route_change = self.on_route_change
         self.about_view = ft.View(
-            "/about",
+            "/rules",
             [
-                ft.Text("About page"),
+                ft.Text("Mosaic game rules", size=18),
+                ft.Markdown(rules),
                 ft.ElevatedButton(
                     "Go to main page",
                     on_click=lambda _: page.go("/"),
@@ -21,12 +23,12 @@ class MosaicApp(ft.UserControl):
             ]
         )
         self.appbar_items = [
-            ft.PopupMenuItem(text="About Mosaic", on_click=lambda _: page.go("/about")),
+            ft.PopupMenuItem(text="Mosaic game rules", on_click=lambda _: page.go("/rules")),
         ]
         self.appbar = ft.AppBar(
             leading=ft.Icon(ft.icons.APPS_SHARP),
             leading_width=50,
-            title=ft.Text(f"Mosaic game v."+get_version(), font_family="Pacifico", size=18,
+            title=ft.Text(f"Mosaic game v." + get_version(), font_family="Pacifico", size=18,
                           text_align=ft.TextAlign.START),
             center_title=False,
             toolbar_height=40,
@@ -41,14 +43,13 @@ class MosaicApp(ft.UserControl):
         self.page.appbar = self.appbar
         self.page.update()
 
-
     def view_pop(self, view):
         self.page.views.pop()
         top_view = self.page.views[-1]
         self.page.go(top_view.route)
 
     def on_route_change(self, route):
-        if self.page.route == "/about":
+        if self.page.route == "/rules":
             self.page.views.append(self.about_view)
         else:
             while len(self.page.views) > 1:
