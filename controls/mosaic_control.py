@@ -43,13 +43,13 @@ class MosaicControl(ft.UserControl):
         while self.running:
             if not self.thinkers:
                 # Not initialized yet
-                time.sleep(1)
+                time.sleep(0.5)
                 continue
             scores = self.calc_scores()
             if sum(scores) == self.field.width * self.field.height:
                 # Game over
                 self.draw_status()
-                time.sleep(1)
+                time.sleep(0.5)
                 continue
             who_play = self.who_play_a.current.selected_value() if self.player_to_move == 0 \
                 else self.who_play_b.current.selected_value()
@@ -59,7 +59,7 @@ class MosaicControl(ft.UserControl):
                 last_clicked = move_selector.last_clicked
                 if last_clicked is None or last_clicked in self.field.forbidden_colors(self.homes):
                     move_selector.last_clicked = None
-                    time.sleep(1)
+                    time.sleep(0.5)
                     continue
                 move = move_selector.last_clicked
                 move_selector.last_clicked = None
@@ -77,7 +77,7 @@ class MosaicControl(ft.UserControl):
             self.draw_field()
             self.draw_status()
             self.update()
-            time.sleep(1)
+            time.sleep(0.5)
 
     def build(self):
         field_size = 640
@@ -151,7 +151,13 @@ class MosaicControl(ft.UserControl):
                 r.current.value = f"Player {n + 1}: {counters[n]}"
         else:
             winner = max(range(len(counters)), key=lambda i: counters[i])
+            ordered_scores = sorted(counters, reverse=True)
+            is_draw = ordered_scores[0] == ordered_scores[1]
             for n, r in enumerate(self.status):
+                if is_draw:
+                    state = "🖖 DRAW"
+                else:
+                    state = "😇 WINNER!!!" if n == winner else "🤕 LOSER"
                 r.current.value = (f"Player {n + 1}: "
-                                   f"{counters[n]} {'WINNER!!!' if n == winner else ''}")
+                                   f"{counters[n]} {state}")
         self.update()
