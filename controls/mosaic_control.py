@@ -82,7 +82,7 @@ class MosaicControl(ft.UserControl):
     def build(self):
         field_size = 640
         title_row = ft.Row([WhoPlayControl(ref=self.who_play_a, expand=True),
-                            ft.ElevatedButton("New game", expand=True, on_click=self.new_game),
+                            ft.ElevatedButton("New game", expand=False, on_click=self.new_game),
                             ft.Text("   ", expand=True)],
                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
         middle_row = ft.Row([
